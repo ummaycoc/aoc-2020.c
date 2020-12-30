@@ -1,0 +1,12 @@
+using system, regex ;
+infixl 1001 %! ; // part 2
+infixl 1000 +! ; // part 1
+infixl 1000 *! ;
+def a %! b = a +! b ;
+def a +! b = ((a + 0L) + (b + 0L)) ;
+def a *! b = ((a * 1L) * (b * 1L)) ;
+input = fget $ fopen "input.raw" "r" ;
+fixup s = regsub (\i -> i!1 + "!") "[%+*]" 0 s 0 ;
+change add s = regsub (cst add) "+" 0 s 0 ;
+run add = init . str . foldl (+) 0L . map eval . filter ("" ~=) . split "\n" . fixup . change add $ input ;
+printf "Part 1: %s\nPart 2: %s\n" (run "+", run "%") ;
