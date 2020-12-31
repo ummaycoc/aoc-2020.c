@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #define BEGIN init();
 #define LOAD(n) pushNumber((long)(n));
@@ -99,6 +100,8 @@ static void compute() {
   sum += mulFactors();
   deallocate();
 }
+
+#include "read.hh"
 
 int main(int argc, char **argv) {
 #include "commands.h"
