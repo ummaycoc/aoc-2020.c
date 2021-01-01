@@ -1,9 +1,18 @@
 using system, regex ;
+
 leftFirst = reduce with a + b * c = (a + b) * c end ;
 rightFirst = reduce with a * b + c = a * (b + c) end ;
-evall a = if same a aa then a else evall aa with aa = eval a end ;
-quoted s = regsub (cst "'(") "(" 0 s 0 ; // can these two be done more idiomatically?
-toLong s = regsub (\s -> s!1 + "L") "[[:digit:]][[:digit:]]*" 0 s 0 ;
-let input = map val . filter ("" ~=) . split "\n" . toLong . quoted . fget $ fopen "input.raw" "r" ;
-run r = init . str . foldl (+) 0L . map (evall . r) $ input ;
+
+toLong (a::int) = uint64 a ;
+toLong (a + b) = (toLong a) + (toLong b) ;
+toLong (a * b) = (toLong a) * (toLong b) ;
+
+fixed f a = loop a (f a) with
+  loop b b = b ;
+  loop b bb = loop bb (f bb) ;
+end ;
+
+quoted s = regsub (cst "'(") "(" 0 s 0 ; // can this be done more idiomatically?
+let input = map val . filter ("" ~=) . split "\n" . quoted . fget $ fopen "input.raw" "r" ;
+run r = init . str . foldl (+) 0L . map (fixed eval . toLong . r) $ input ;
 printf "Part 1: %s\nPart 2: %s\n" (run leftFirst, run (rightFirst . leftFirst)) ;
